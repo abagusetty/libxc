@@ -217,7 +217,7 @@ static void
 WORK_MGGA(ORDER_TXT, SPIN_TXT)
 (const XC(func_type) *p, size_t np,
  const double *rho, const double *sigma, const double *lapl, const double *tau,
- xc_mgga_out_params *out, cudaStream_t stream)
+ xc_mgga_out_params *out)
 {
   //make a copy of 'p' and 'out' since they might be in host-only memory
   XC(func_type) *pcuda;
@@ -251,7 +251,7 @@ WORK_MGGA(ORDER_TXT, SPIN_TXT)
   size_t nblocks = np/CUDA_BLOCK_SIZE;
   if(np != nblocks*CUDA_BLOCK_SIZE) nblocks++;
 
-  WORK_MGGA_GPU(ORDER_TXT, SPIN_TXT)<<<nblocks, CUDA_BLOCK_SIZE, 0, stream>>>
+  WORK_MGGA_GPU(ORDER_TXT, SPIN_TXT)<<<nblocks, CUDA_BLOCK_SIZE, 0, 0>>>
     (pcuda, np, rho, sigma, lapl, tau, outcuda);
 
   free(pcopy);
