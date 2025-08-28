@@ -24,7 +24,7 @@
    Based on the SLATEC routine by W. Fullerton and on the GSL.
 */
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double AE11_data[39] = {
@@ -38,7 +38,7 @@ static double AE11_data[39] = {
   -0.000000000000000024, -0.000000000000000201, -0.000000000000000082,  0.000000000000000017
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double AE12_data[25] = {
@@ -49,7 +49,7 @@ static double AE12_data[25] = {
    0.000000000000010707, -0.000000000000000537, -0.000000000000000716, -0.000000000000000244, -0.000000000000000058
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double E11_data[19] = {
@@ -59,7 +59,7 @@ static double E11_data[19] = {
     0.00000000000001479904,  -0.00000000000000065457,   0.00000000000000002733,  -0.00000000000000000108
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double E12_data[16] = {
@@ -69,7 +69,7 @@ static double E12_data[16] = {
    0.00000000000000000315
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double AE13_data[25] = {
@@ -80,7 +80,7 @@ static double AE13_data[25] = {
    0.000000000000006457, -0.000000000000001568,  0.000000000000000383, -0.000000000000000094,  0.000000000000000023
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double AE14_data[26] = {
@@ -113,7 +113,7 @@ GPU_FUNCTION double xc_expint_e1_impl(double x, const int scale){
     const double scale_factor = ( scale ? exp(x) : 1.0 );
     e1 = scale_factor * (-log(fabs(x)) + xc_cheb_eval((2.0*x + 5.0)/3.0, E11_data, 19));
   }else if(x == 0.0) {
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
     fprintf(stderr, "Argument cannot be 0.0 in expint_e1\n");
 #endif
   }else if(x <= 1.0){
@@ -126,7 +126,7 @@ GPU_FUNCTION double xc_expint_e1_impl(double x, const int scale){
     const double s = 1.0/x * ( scale ? 1.0 : exp(-x) );
     e1 = s * (1.0 + xc_cheb_eval(8.0/x - 1.0, AE14_data, 26));
   }else{
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
   fprintf(stderr, "Argument %14.10le is larger than xmax=%14.10le in expint_e1\n", x, xmax);
 #endif
   }

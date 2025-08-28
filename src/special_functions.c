@@ -24,7 +24,7 @@ GPU_FUNCTION double LambertW(double z)
 
   /* Sanity check - function is only defined for z >= -1/e */
   if(z + 1.0/M_E < -10*DBL_EPSILON) {
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
     fprintf(stderr,"Error - Lambert function called with argument z = %e.\n",z);
     exit(1);
 #endif
@@ -72,7 +72,7 @@ GPU_FUNCTION double LambertW(double z)
       return w;
   }
 
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
   /* This should never happen! */
   fprintf(stderr, "lambert_w: iteration limit i=%i reached for z= %.16e\nShould never happen!\n", i, z);
 #endif
@@ -86,12 +86,12 @@ GPU_FUNCTION double LambertW(double z)
   based on the SLATEC routine by W. Fullerton
 */
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static const double pi26 = 1.644934066848226436472415166646025189219;
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static const double spencs[38] =

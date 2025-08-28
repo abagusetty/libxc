@@ -28,7 +28,7 @@
 #define WORK_LDA_GPU(order, spin) WORK_LDA_GPU_(order, spin)
 #define FUNC(order, spin)         FUNC_(order, spin)
 
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
 
 static void
 WORK_LDA(ORDER_TXT, SPIN_TXT)
@@ -97,7 +97,12 @@ WORK_LDA_GPU(ORDER_TXT, SPIN_TXT)
              const double *rho,
              xc_lda_out_params *out)
 {
+  #ifdef HAVE_CUDA
   size_t ip = blockIdx.x*blockDim.x + threadIdx.x;
+  #else
+  auto item = = syclex::this_work_item::get_nd_item<1>();
+  size_t ip = item.get_global_id(0);
+  #endif
   double dens;
   double my_rho[2] = {0.0, 0.0};
 

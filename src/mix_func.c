@@ -39,21 +39,31 @@ xc_mix_init(xc_func_type *p, int n_funcs, const int *funcs_id, const double *mix
   p->nlc_C     = 0.0;
 }
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __global__ static void add_to_mix_gpu(size_t np, double * dst, double coeff, const double *src){
+#ifdef HAVE_CUDA
   size_t ip = blockIdx.x * blockDim.x + threadIdx.x;
+#elif defined(HAVE_SYCL)
+  auto item = = syclex::this_work_item::get_nd_item<1>();
+  size_t ip = item.get_global_id(0);
+#endif
   if(ip < np) dst[ip] += coeff*src[ip];
 }
 #endif
 
 static void add_to_mix(size_t np, double * dst, double coeff, const double *src){
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
   size_t ip;
   for(ip = 0; ip < np; ip++) dst[ip] += coeff*src[ip];
 #else
   size_t nblocks = np/CUDA_BLOCK_SIZE;
   if(np != nblocks*CUDA_BLOCK_SIZE) nblocks++;
+  #ifdef HAVE_CUDA
   add_to_mix_gpu<<<nblocks, CUDA_BLOCK_SIZE>>>(np, dst, coeff, src);
+  #elif defined(HAVE_SYCL)
+  sycl_get_queue()->parallel_for(sycl::nd_range<1>(nblocks * CUDA_BLOCK_SIZE, CUDA_BLOCK_SIZE), [=](auto item) {
+	  add_to_mix_gpu(np, dst, coeff, src); });
+  #endif
 #endif
 }
 

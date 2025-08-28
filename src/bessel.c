@@ -9,7 +9,7 @@
 
 #include "util.h"
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double bi0_data[12] = {
@@ -18,7 +18,7 @@ static double bi0_data[12] = {
    .00000000000000053339,  .00000000000000000245
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ai0_data[21] = {
@@ -29,7 +29,7 @@ static double ai0_data[21] = {
    .00000000000000007
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ai02_data[22] = {
@@ -90,7 +90,7 @@ double xc_bessel_I0(const double x)
   return r;
 }
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double bi1_data[11] = {
@@ -99,7 +99,7 @@ static double bi1_data[11] = {
    0.000000000000000024
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ai1_data[21] = {
@@ -110,7 +110,7 @@ static double ai1_data[21] = {
   -0.00000000000000006
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ai12_data[22] = {
@@ -175,7 +175,7 @@ double xc_bessel_I1(const double x)
   return r;
 }
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double bk0_data[11] = {
@@ -184,7 +184,7 @@ static double bk0_data[11] = {
    0.00000000000000000035
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ak0_data[17] = {
@@ -194,7 +194,7 @@ static double ak0_data[17] = {
   -0.00000000000000033,  0.00000000000000005
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ak02_data[14] = {
@@ -240,7 +240,7 @@ double xc_bessel_K0(const double x)
   return r;
 }
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double bk1_data[11] = {
@@ -249,7 +249,7 @@ static double bk1_data[11] = {
   -0.0000000000000000070
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ak1_data[17] = {
@@ -259,7 +259,7 @@ static double ak1_data[17] = {
    0.00000000000000038, -0.00000000000000006
 };
 
-#ifdef HAVE_CUDA
+#if defined(HAVE_CUDA) || defined(HAVE_SYCL)
 __device__
 #endif
 static double ak12_data[14] = {
@@ -274,7 +274,7 @@ double xc_bessel_K1_scaled(const double x)
   double r = 0.0;
 
   if(x <= 0.0) {
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
     fprintf(stderr, "Domain error in bessel_K1_scaled\n");
 #endif
   } else if(x <= 2.0)
@@ -294,11 +294,11 @@ double xc_bessel_K1(const double x)
   double r = 0.0;
 
   if(x <= 0.0) {
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
     fprintf(stderr, "Domain error in bessel_K1\n");
 #endif
   } else if(x<2.0*DBL_MIN) {
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
     fprintf(stderr, "Overflow error in bessel_K1\n");
 #endif
   }
