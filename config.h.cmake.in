@@ -12,5 +12,10 @@
 #define HAVE_CUDA 1
 #endif
 
+#cmakedefine ENABLE_SYCL @ENABLE_SYCL@
+#ifdef ENABLE_SYCL
+#define HAVE_SYCL 1
+#endif
+
 #include <stdio.h>
 
