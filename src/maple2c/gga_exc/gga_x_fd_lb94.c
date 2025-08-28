@@ -57,7 +57,7 @@ func_exc_unpol(const xc_func_type *p, size_t ip, const double *rho, const double
   t35 = t25 * t26 * t28 * t30 / 0.12e2;
   t36 = xc_integrate(func0, NULL, 0.0, t35);
   t37 = log(t35);
-  t39 = xc_integrate(func1, NULL, 0.0, t35);
+  t39 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t35);
   t40 = t36 * t37 - t39;
   t41 = t31 * t40;
   t44 = 0.1e1 - t27 * t41 / 0.12e2;
@@ -117,7 +117,7 @@ func_vxc_unpol(const xc_func_type *p, size_t ip, const double *rho, const double
   t35 = t25 * t26 * t28 * t30 / 0.12e2;
   t36 = xc_integrate(func0, NULL, 0.0, t35);
   t37 = log(t35);
-  t39 = xc_integrate(func1, NULL, 0.0, t35);
+  t39 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t35);
   t40 = t36 * t37 - t39;
   t41 = t31 * t40;
   t44 = 0.1e1 - t27 * t41 / 0.12e2;
@@ -208,7 +208,7 @@ func_fxc_unpol(const xc_func_type *p, size_t ip, const double *rho, const double
   t35 = t25 * t26 * t28 * t30 / 0.12e2;
   t36 = xc_integrate(func0, NULL, 0.0, t35);
   t37 = log(t35);
-  t39 = xc_integrate(func1, NULL, 0.0, t35);
+  t39 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t35);
   t40 = t36 * t37 - t39;
   t41 = t31 * t40;
   t44 = 0.1e1 - t27 * t41 / 0.12e2;
@@ -364,7 +364,7 @@ func_kxc_unpol(const xc_func_type *p, size_t ip, const double *rho, const double
   t35 = t25 * t26 * t28 * t30 / 0.12e2;
   t36 = xc_integrate(func0, NULL, 0.0, t35);
   t37 = log(t35);
-  t39 = xc_integrate(func1, NULL, 0.0, t35);
+  t39 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t35);
   t40 = t36 * t37 - t39;
   t41 = t31 * t40;
   t44 = 0.1e1 - t27 * t41 / 0.12e2;
@@ -585,7 +585,7 @@ func_lxc_unpol(const xc_func_type *p, size_t ip, const double *rho, const double
   t35 = t25 * t26 * t28 * t30 / 0.12e2;
   t36 = xc_integrate(func0, NULL, 0.0, t35);
   t37 = log(t35);
-  t39 = xc_integrate(func1, NULL, 0.0, t35);
+  t39 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t35);
   t40 = t36 * t37 - t39;
   t41 = t31 * t40;
   t44 = 0.1e1 - t27 * t41 / 0.12e2;
@@ -845,7 +845,7 @@ func_exc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t40 = t33 * t38 / 0.12e2;
   t41 = xc_integrate(func0, NULL, 0.0, t40);
   t42 = log(t40);
-  t44 = xc_integrate(func1, NULL, 0.0, t40);
+  t44 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t40);
   t45 = t41 * t42 - t44;
   t49 = 0.1e1 - t33 * t38 * t45 / 0.12e2;
   t53 = my_piecewise3(t1, 0, -0.3e1 / 0.8e1 * t5 * t27 * t49);
@@ -864,7 +864,7 @@ func_exc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t70 = t33 * t68 / 0.12e2;
   t71 = xc_integrate(func0, NULL, 0.0, t70);
   t72 = log(t70);
-  t74 = xc_integrate(func1, NULL, 0.0, t70);
+  t74 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t70);
   t75 = t71 * t72 - t74;
   t79 = 0.1e1 - t33 * t68 * t75 / 0.12e2;
   t83 = my_piecewise3(t54, 0, -0.3e1 / 0.8e1 * t5 * t63 * t79);
@@ -936,7 +936,7 @@ func_vxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t40 = t33 * t38 / 0.12e2;
   t41 = xc_integrate(func0, NULL, 0.0, t40);
   t42 = log(t40);
-  t44 = xc_integrate(func1, NULL, 0.0, t40);
+  t44 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t40);
   t45 = t41 * t42 - t44;
   t49 = 0.1e1 - t33 * t38 * t45 / 0.12e2;
   t53 = my_piecewise3(t1, 0, -0.3e1 / 0.8e1 * t5 * t27 * t49);
@@ -955,7 +955,7 @@ func_vxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t70 = t33 * t68 / 0.12e2;
   t71 = xc_integrate(func0, NULL, 0.0, t70);
   t72 = log(t70);
-  t74 = xc_integrate(func1, NULL, 0.0, t70);
+  t74 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t70);
   t75 = t71 * t72 - t74;
   t79 = 0.1e1 - t33 * t68 * t75 / 0.12e2;
   t83 = my_piecewise3(t54, 0, -0.3e1 / 0.8e1 * t5 * t63 * t79);
@@ -1114,7 +1114,7 @@ func_fxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t40 = t33 * t38 / 0.12e2;
   t41 = xc_integrate(func0, NULL, 0.0, t40);
   t42 = log(t40);
-  t44 = xc_integrate(func1, NULL, 0.0, t40);
+  t44 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t40);
   t45 = t41 * t42 - t44;
   t49 = 0.1e1 - t33 * t38 * t45 / 0.12e2;
   t53 = my_piecewise3(t1, 0, -0.3e1 / 0.8e1 * t5 * t27 * t49);
@@ -1133,7 +1133,7 @@ func_fxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t70 = t33 * t68 / 0.12e2;
   t71 = xc_integrate(func0, NULL, 0.0, t70);
   t72 = log(t70);
-  t74 = xc_integrate(func1, NULL, 0.0, t70);
+  t74 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t70);
   t75 = t71 * t72 - t74;
   t79 = 0.1e1 - t33 * t68 * t75 / 0.12e2;
   t83 = my_piecewise3(t54, 0, -0.3e1 / 0.8e1 * t5 * t63 * t79);
@@ -1526,7 +1526,7 @@ func_kxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t40 = t33 * t38 / 0.12e2;
   t41 = xc_integrate(func0, NULL, 0.0, t40);
   t42 = log(t40);
-  t44 = xc_integrate(func1, NULL, 0.0, t40);
+  t44 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t40);
   t45 = t41 * t42 - t44;
   t49 = 0.1e1 - t33 * t38 * t45 / 0.12e2;
   t53 = my_piecewise3(t1, 0, -0.3e1 / 0.8e1 * t5 * t27 * t49);
@@ -1545,7 +1545,7 @@ func_kxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t70 = t33 * t68 / 0.12e2;
   t71 = xc_integrate(func0, NULL, 0.0, t70);
   t72 = log(t70);
-  t74 = xc_integrate(func1, NULL, 0.0, t70);
+  t74 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t70);
   t75 = t71 * t72 - t74;
   t79 = 0.1e1 - t33 * t68 * t75 / 0.12e2;
   t83 = my_piecewise3(t54, 0, -0.3e1 / 0.8e1 * t5 * t63 * t79);
@@ -2332,7 +2332,7 @@ func_lxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t40 = t33 * t38 / 0.12e2;
   t41 = xc_integrate(func0, NULL, 0.0, t40);
   t42 = log(t40);
-  t44 = xc_integrate(func1, NULL, 0.0, t40);
+  t44 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t40);
   t45 = t41 * t42 - t44;
   t49 = 0.1e1 - t33 * t38 * t45 / 0.12e2;
   t53 = my_piecewise3(t1, 0, -0.3e1 / 0.8e1 * t5 * t27 * t49);
@@ -2351,7 +2351,7 @@ func_lxc_pol(const xc_func_type *p, size_t ip, const double *rho, const double *
   t70 = t33 * t68 / 0.12e2;
   t71 = xc_integrate(func0, NULL, 0.0, t70);
   t72 = log(t70);
-  t74 = xc_integrate(func1, NULL, 0.0, t70);
+  t74 = xc_integrate(func1_gga_x_fd_lb94, NULL, 0.0, t70);
   t75 = t71 * t72 - t74;
   t79 = 0.1e1 - t33 * t68 * t75 / 0.12e2;
   t83 = my_piecewise3(t54, 0, -0.3e1 / 0.8e1 * t5 * t63 * t79);

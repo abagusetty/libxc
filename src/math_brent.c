@@ -34,7 +34,7 @@ double xc_math_brent
   fs = 0;
 
   if (fa * fb > 0){
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
     fprintf(stderr, "Brent: bracketing error [%lf,%lf]\n", a, b);
     exit(1);
 #endif
@@ -104,7 +104,7 @@ double xc_math_brent
 
   }
 
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
   fprintf(stderr, "Warning: Convergence not reached in brent\n");
 #endif
 

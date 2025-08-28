@@ -24,13 +24,16 @@ lda_x_1d_exponential_init(xc_func_type *p)
 }
 
 GPU_FUNCTION
-static inline double FT_inter(double x)
+inline double FT_inter(double x)
 {
   return 2.0*xc_bessel_K0(x);
 }
 
+#ifdef HAVE_SYCL
+[[intel::device_indirectly_callable]]
+#endif
 GPU_FUNCTION
-static void func1(double *x, int n, void *dummy)
+void func1_lda_x_1d_soft(double *x, int n, void *dummy)
 {
   int ii;
 
@@ -38,8 +41,11 @@ static void func1(double *x, int n, void *dummy)
     x[ii] = FT_inter(x[ii]);
 }
 
+#ifdef HAVE_SYCL
+[[intel::device_indirectly_callable]]
+#endif
 GPU_FUNCTION
-static void func2(double *x, int n, void *dummy)
+void func2_lda_x_1d_soft(double *x, int n, void *dummy)
 {
   int ii;
 

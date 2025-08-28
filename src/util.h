@@ -42,7 +42,7 @@
 #elif defined(HAVE_SYCL)
 #define GPU_FUNCTION SYCL_EXTERNAL __attribute__((always_inline))
 #define GPU_DEVICE_FUNCTION __attribute__((always_inline))
-#define GPU_BLOCK_SIZE 256
+#define CUDA_BLOCK_SIZE 256
 #else
 #define GPU_FUNCTION
 #define GPU_DEVICE_FUNCTION
@@ -152,7 +152,7 @@ GPU_FUNCTION double xc_dilogarithm(const double x);
 
 /* we define this function here, so it can be properly inlined by all compilers */
 GPU_FUNCTION
-static inline double
+inline double
 xc_cheb_eval(const double x, const double *cs, const int N)
 {
   int i;
@@ -180,11 +180,11 @@ GPU_FUNCTION double xc_bessel_K1_scaled(const double x);
 GPU_FUNCTION double xc_bessel_K1(const double x);
 
 GPU_FUNCTION double xc_expint_e1_impl(double x, const int scale);
-GPU_FUNCTION static inline double expint_e1(const double x)         { return  xc_expint_e1_impl( x, 0); }
-GPU_FUNCTION static inline double expint_e1_scaled(const double x)  { return  xc_expint_e1_impl( x, 1); }
-GPU_FUNCTION static inline double expint_Ei(const double x)         { return -xc_expint_e1_impl(-x, 0); }
+GPU_FUNCTION inline double expint_e1(const double x)         { return  xc_expint_e1_impl( x, 0); }
+GPU_FUNCTION inline double expint_e1_scaled(const double x)  { return  xc_expint_e1_impl( x, 1); }
+GPU_FUNCTION inline double expint_Ei(const double x)         { return -xc_expint_e1_impl(-x, 0); }
 #define Ei(x) expint_Ei(x)
-GPU_FUNCTION static inline double expint_Ei_scaled(const double x)  { return -xc_expint_e1_impl(-x, 1); }
+GPU_FUNCTION inline double expint_Ei_scaled(const double x)  { return -xc_expint_e1_impl(-x, 1); }
 
 GPU_FUNCTION double xc_erfcx(double x);
 
@@ -375,14 +375,14 @@ void libxc_memcpy(void *dest, void const *src, const int_type size){
 template <class int_type>
 void * libxc_malloc(const int_type size){
   void * mem;
-  mem = (void*)sycl::malloc_shared(size, *sycl_get_queue());
+  mem = (void*)sycl::malloc_device(size, *sycl_get_queue());
   return mem;
 }
 
 template <class int_type1, class int_type2>
 void * libxc_calloc(const int_type1 size1, const int_type2 size2){
   void * mem;
-  mem = (void*)sycl::malloc_shared(size1*size2, *sycl_get_queue());
+  mem = (void*)sycl::malloc_device(size1*size2, *sycl_get_queue());
   auto event = sycl_get_queue()->memset(mem, 0, size1*size2);
   event.wait();
   return mem;

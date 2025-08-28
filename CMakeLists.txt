@@ -25,6 +25,7 @@ if(ENABLE_SYCL)
   set(CMAKE_VERBOSE_MAKEFILE ON)
   enable_language(CXX)
   set(CMAKE_CXX_STANDARD 17)
+  add_definitions(-DHAVE_SYCL)
 endif()
 
 ################################### Options ####################################

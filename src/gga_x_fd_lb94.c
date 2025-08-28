@@ -17,13 +17,13 @@ typedef struct{
 } gga_x_fd_lb94_params;
 
 #define N_PAR 1
-static const char *names[N_PAR] = {"_beta"};
-static const char *desc[N_PAR] = {"beta parameter"};
+const char *names[N_PAR] = {"_beta"};
+const char *desc[N_PAR] = {"beta parameter"};
 
-static const double lb94_par[N_PAR] = {0.05};
-static const double revlb94_par[N_PAR] = {0.004};
+const double lb94_par[N_PAR] = {0.05};
+const double revlb94_par[N_PAR] = {0.004};
 
-static void
+void
 gga_x_fd_lb94_init(xc_func_type *p)
 {
   assert(p!=NULL && p->params == NULL);
@@ -32,9 +32,9 @@ gga_x_fd_lb94_init(xc_func_type *p)
 }
 
 GPU_FUNCTION
-static inline double FT_inter(int n, double x)
+inline double FT_inter(int n, double x)
 {
-  static double fd_beta = 0.05, fd_csi = M_CBRT2;
+  double fd_beta = 0.05, fd_csi = M_CBRT2;
 
   double mlog;
 
@@ -44,8 +44,11 @@ static inline double FT_inter(int n, double x)
     (1 + 3*fd_beta*fd_csi*x*log(fd_csi*x + sqrt(fd_csi*fd_csi*x*x + 1)));
 }
 
+#ifdef HAVE_SYCL
+[[intel::device_indirectly_callable]]
+#endif
 GPU_FUNCTION
-static void func0(double *x, int n, void *dummy)
+void func0(double *x, int n, void *dummy)
 {
   int ii;
 
@@ -53,8 +56,11 @@ static void func0(double *x, int n, void *dummy)
     x[ii] = FT_inter(0, x[ii]);
 }
 
+#ifdef HAVE_SYCL
+[[intel::device_indirectly_callable]]
+#endif
 GPU_FUNCTION
-static void func1(double *x, int n, void *dummy)
+void func1_gga_x_fd_lb94(double *x, int n, void *dummy)
 {
   int ii;
 

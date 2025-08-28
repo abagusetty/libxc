@@ -18,14 +18,14 @@ typedef struct{
 } mgga_x_br89_params;
 
 #define BR89_N_PAR 2
-static const char  *br89_names[BR89_N_PAR]    = {"_gamma", "_at"};
-static const char  *br89_desc[BR89_N_PAR]     = {"gamma", "at"};
+const char  *br89_names[BR89_N_PAR]    = {"_gamma", "_at"};
+const char  *br89_desc[BR89_N_PAR]     = {"gamma", "at"};
 
-static const double br89_values[BR89_N_PAR]   = {0.8, 0.0};
-static const double br89_1_values[BR89_N_PAR] = {1.0, 0.0};
-static const double b00_values[BR89_N_PAR] = {1.0, 0.928};
+const double br89_values[BR89_N_PAR]   = {0.8, 0.0};
+const double br89_1_values[BR89_N_PAR] = {1.0, 0.0};
+const double b00_values[BR89_N_PAR] = {1.0, 0.928};
 
-static void
+void
 mgga_x_br89_init(xc_func_type *p)
 {
   assert(p != NULL && p->params == NULL);
@@ -33,7 +33,10 @@ mgga_x_br89_init(xc_func_type *p)
   p->params_size = sizeof(mgga_x_br89_params);
 }
 
-GPU_FUNCTION static double
+#ifdef HAVE_SYCL
+[[intel::device_indirectly_callable]]
+#endif
+GPU_FUNCTION double
 br89_x_Q(double x, void *_rhs)
 {
   double rhs, xm2, arg, eee;

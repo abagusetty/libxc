@@ -12,11 +12,15 @@
 
 #include <sycl/sycl.hpp>
 
+namespace syclex = sycl::ext::oneapi;
+
 #define __global__ __attribute__((always_inline))
 #define __device__ __attribute__((always_inline))
 
-#define cudaMemcpyHostToDevice
-#define cudaMemcpyDeviceToHost
+static int cudaMemcpyHostToDevice{0};
+static int cudaMemcpyDeviceToHost{0};
+//#define cudaMemcpyHostToDevice int
+//#define cudaMemcpyDeviceToHost int
 
 #ifdef SYCL_EXT_ONEAPI_DEVICE_GLOBAL
 template <class T>
@@ -131,6 +135,6 @@ static inline void cudaMalloc(void** ptr, size_t size) {
 static inline void cudaFree(void* ptr) {
   sycl::free(ptr, *(sycl_get_queue()));
 }
-static inline void cudaMemcpy(void* dst, const void* src, size_t count, [[maybe_unused]] int kind) {
-  sycl_get_queue()->memcpy(dst, src, count).wait();
+static inline void cudaMemcpy(void* dst, const void* src, size_t countInBytes, [[maybe_unused]] int kind) {
+  sycl_get_queue()->memcpy(dst, src, countInBytes).wait();
 }

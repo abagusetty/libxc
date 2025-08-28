@@ -44,7 +44,7 @@ __global__ static void add_to_mix_gpu(size_t np, double * dst, double coeff, con
 #ifdef HAVE_CUDA
   size_t ip = blockIdx.x * blockDim.x + threadIdx.x;
 #elif defined(HAVE_SYCL)
-  auto item = = syclex::this_work_item::get_nd_item<1>();
+  auto item = syclex::this_work_item::get_nd_item<1>();
   size_t ip = item.get_global_id(0);
 #endif
   if(ip < np) dst[ip] += coeff*src[ip];

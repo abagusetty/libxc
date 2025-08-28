@@ -114,7 +114,7 @@ const double *rho, const double *sigma, xc_gga_out_params *out)
   #ifdef HAVE_CUDA
   size_t ip = blockIdx.x*blockDim.x + threadIdx.x;
   #else
-  auto item = = syclex::this_work_item::get_nd_item<1>();
+  auto item = syclex::this_work_item::get_nd_item<1>();
   size_t ip = item.get_global_id(0);
   #endif
   double dens;
@@ -188,10 +188,10 @@ WORK_GGA(ORDER_TXT, SPIN_TXT)
 
   #ifndef HAVE_SYCL
   WORK_GGA_GPU(ORDER_TXT, SPIN_TXT)<<<nblocks, CUDA_BLOCK_SIZE>>>
-    (pcuda, np, rhoe, sigma, outcuda);
+    (pcuda, np, rho, sigma, outcuda);
   #else
   auto event = sycl_get_queue()->parallel_for(sycl::nd_range<1>(nblocks * CUDA_BLOCK_SIZE, CUDA_BLOCK_SIZE), [=](auto item) {
-      WORK_GGA_GPU(ORDER_TXT, SPIN_TXT)(pcuda, np, rhoe, sigma, outcuda); });
+      WORK_GGA_GPU(ORDER_TXT, SPIN_TXT)(pcuda, np, rho, sigma, outcuda); });
   event.wait();
   // event.wait() is required here to prevent undefined-behavior with free-ing memory
   // unlike CUDA which does implicit sync with freeing-device memory  

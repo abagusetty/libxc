@@ -11,7 +11,10 @@
 
 #define XC_MGGA_X_MBRXC_BG  696 /* Modified Becke-Roussel for band gaps - cuspless hole */
 
-GPU_FUNCTION static double
+#ifdef HAVE_SYCL
+[[intel::device_indirectly_callable]]
+#endif
+GPU_FUNCTION double
 mbrxc_x_Q(double x, void *_rhs)
 {
   double rhs;

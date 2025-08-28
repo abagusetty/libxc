@@ -51,12 +51,12 @@ GPU_FUNCTION double xc_integrate(integr_fn func, void *ex, double a, double b)
 
 /* f2c-ed translations + modifications of QUADPACK functions from here down */
 
-GPU_FUNCTION static void rdqk21(integr_fn f, void *ex,
+GPU_FUNCTION void rdqk21(integr_fn f, void *ex,
 		   double *, double *, double *, double *, double *, double *);
 
-GPU_FUNCTION static void rdqpsrt(int *, int *, int *, double *, double *, int *, int *);
+GPU_FUNCTION void rdqpsrt(int *, int *, int *, double *, double *, int *, int *);
 
-GPU_FUNCTION static void rdqelg(int *, double *, double *, double *, double *, int *);
+GPU_FUNCTION void rdqelg(int *, double *, double *, double *, double *, int *);
 
 GPU_FUNCTION void xc_rdqagse(integr_fn f, void *ex, double *a, double *b,
 	     double *epsabs, double *epsrel, int *limit, double *result,
@@ -578,7 +578,7 @@ GPU_FUNCTION void xc_rdqagse(integr_fn f, void *ex, double *a, double *b,
 } /* rdqagse_ */
 
 
-GPU_FUNCTION static void rdqelg(int *n, double *epstab, double *
+GPU_FUNCTION void rdqelg(int *n, double *epstab, double *
 		   result, double *abserr, double *res3la, int *nres)
 {
   /* Local variables */
@@ -779,17 +779,17 @@ GPU_FUNCTION static void rdqelg(int *n, double *epstab, double *
   return;
 } /* rdqelg_ */
 
-GPU_FUNCTION static void  rdqk21(integr_fn f, void *ex, double *a, double *b, double *result,
+GPU_FUNCTION void  rdqk21(integr_fn f, void *ex, double *a, double *b, double *result,
 		    double *abserr, double *resabs, double *resasc)
 {
   /* Initialized data */
 
-  static double wg[5] = { .066671344308688137593568809893332,
+  double wg[5] = { .066671344308688137593568809893332,
 			  .149451349150580593145776339657697,
 			  .219086362515982043995534934228163,
 			  .269266719309996355091226921569469,
 			  .295524224714752870173892994651338 };
-  static double xgk[11] = { .995657163025808080735527280689003,
+  double xgk[11] = { .995657163025808080735527280689003,
 			    .973906528517171720077964012084452,
 			    .930157491355708226001207180059508,
 			    .865063366688984510732096688423493,
@@ -799,7 +799,7 @@ GPU_FUNCTION static void  rdqk21(integr_fn f, void *ex, double *a, double *b, do
 			    .433395394129247190799265943165784,
 			    .294392862701460198131126603103866,
 			    .14887433898163121088482600112972,0. };
-  static double wgk[11] = { .011694638867371874278064396062192,
+  double wgk[11] = { .011694638867371874278064396062192,
 			    .03255816230796472747881897245939,
 			    .05475589657435199603138130024458,
 			    .07503967481091995276704314091619,
@@ -989,7 +989,7 @@ bell labs, nov. 1981.
 } /* rdqk21_ */
 
 
-static void rdqpsrt(int *limit, int *last, int *maxerr,
+void rdqpsrt(int *limit, int *last, int *maxerr,
 		    double *ermax, double *elist, int *iord, int *nrmax)
 {
   /* Local variables */

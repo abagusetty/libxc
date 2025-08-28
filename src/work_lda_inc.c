@@ -100,7 +100,7 @@ WORK_LDA_GPU(ORDER_TXT, SPIN_TXT)
   #ifdef HAVE_CUDA
   size_t ip = blockIdx.x*blockDim.x + threadIdx.x;
   #else
-  auto item = = syclex::this_work_item::get_nd_item<1>();
+  auto item = syclex::this_work_item::get_nd_item<1>();
   size_t ip = item.get_global_id(0);
   #endif
   double dens;
@@ -163,7 +163,7 @@ WORK_LDA(ORDER_TXT, SPIN_TXT)
     (pcuda, np, rho, outcuda);
   #else
   auto event = sycl_get_queue()->parallel_for(sycl::nd_range<1>(nblocks * CUDA_BLOCK_SIZE, CUDA_BLOCK_SIZE), [=](auto item) {
-      WORK_LDA_GPU(ORDER_TXT, SPIN_TXT)(pcuda, np, rho, outcuda); });
+      WORK_LDA_GPU(ORDER_TXT, SPIN_TXT) (pcuda, np, rho, outcuda); });
   event.wait();
   // event.wait() is required here to prevent undefined-behavior with free-ing memory
   // unlike CUDA which does implicit sync with freeing-device memory
