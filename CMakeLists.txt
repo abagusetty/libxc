@@ -21,6 +21,12 @@ if(ENABLE_CUDA)
   endif()
 endif()
 
+if(ENABLE_SYCL)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+  enable_language(CXX)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
 ################################### Options ####################################
 include(psi4OptionsTools)
 option_with_default(CMAKE_BUILD_TYPE "Build type" Release)
@@ -466,6 +472,9 @@ string(REGEX REPLACE "([^;]+)" "${src_prefix}\\1" sources_list "${raw_sources_li
 if(ENABLE_CUDA)
   set_source_files_properties(${sources_list} PROPERTIES LANGUAGE CUDA)
 endif()
+if(ENABLE_SYCL)
+  set_source_files_properties(${sources_list} PROPERTIES LANGUAGE CXX)
+endif()
 
 set(raw_sources_list_f90
   src/libxc_master.F90
@@ -489,7 +498,9 @@ set(CMAKE_INSTALL_RPATH ${base} ${base}/${relDir})
 
 # STATIC/SHARED on below governed by BUILD_SHARED_LIBS
 add_library(xc ${sources_list})
-set_target_properties(xc PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+if(ENABLE_CUDA)
+  set_target_properties(xc PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+endif()
 target_link_libraries(xc PUBLIC ${STANDARD_MATH_LIBRARY})
 set_target_properties(xc PROPERTIES POSITION_INDEPENDENT_CODE ${BUILD_FPIC}
   SOVERSION ${${PROJECT_NAME}_SOMAJOR})
@@ -512,11 +523,17 @@ add_executable(xc-info "${src_prefix}/xc-info.c")
 if(ENABLE_CUDA)
   set_source_files_properties("${src_prefix}/xc-info.c" PROPERTIES LANGUAGE CUDA)
 endif()
+if(ENABLE_SYCL)
+  set_source_files_properties("${src_prefix}/xc-info.c" PROPERTIES LANGUAGE CXX)
+endif()
 target_link_libraries(xc-info xc)
 
 add_executable(xc-threshold "${src_prefix}/xc-threshold.c")
 if(ENABLE_CUDA)
   set_source_files_properties("${src_prefix}/xc-threshold.c" PROPERTIES LANGUAGE CUDA)
+endif()
+if(ENABLE_SYCL)
+  set_source_files_properties("${src_prefix}/xc-threshold.c" PROPERTIES LANGUAGE CXX)
 endif()
 target_link_libraries(xc-threshold xc)
 
@@ -532,7 +549,7 @@ if(BUILD_TESTING)
     DOC "Path to zipping utility")
   if(BZip2_EXECUTABLE)
     enable_testing ()
-    add_subdirectory(testsuite)  
+    add_subdirectory(testsuite)
   else()
     message(FATAL_ERROR "Install `bzip2` command to enable tests")
   endif()

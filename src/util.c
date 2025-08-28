@@ -275,6 +275,8 @@ libxc_free(void *ptr)
 {
 #ifdef HAVE_CUDA
   cudaFree(ptr);
+#elif defined(HAVE_SYCL)
+  sycl::free(ptr, *sycl_get_queue());  
 #else
   free(ptr);
 #endif

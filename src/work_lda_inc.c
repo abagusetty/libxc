@@ -153,8 +153,16 @@ WORK_LDA(ORDER_TXT, SPIN_TXT)
   size_t nblocks = np/CUDA_BLOCK_SIZE;
   if(np != nblocks*CUDA_BLOCK_SIZE) nblocks++;
 
+  #ifndef HAVE_SYCL
   WORK_LDA_GPU(ORDER_TXT, SPIN_TXT)<<<nblocks, CUDA_BLOCK_SIZE>>>
     (pcuda, np, rho, outcuda);
+  #else
+  auto event = sycl_get_queue()->parallel_for(sycl::nd_range<1>(nblocks * CUDA_BLOCK_SIZE, CUDA_BLOCK_SIZE), [=](auto item) {
+      WORK_LDA_GPU(ORDER_TXT, SPIN_TXT)(pcuda, np, rho, outcuda); });
+  event.wait();
+  // event.wait() is required here to prevent undefined-behavior with free-ing memory
+  // unlike CUDA which does implicit sync with freeing-device memory
+  #endif
 
   free(pcopy);
 
@@ -166,11 +174,13 @@ WORK_LDA(ORDER_TXT, SPIN_TXT)
     cudaFree(params_cuda);
   }
 
+  #ifndef HAVE_SYCL
   cudaError_t err = cudaGetLastError();
   if (err != cudaSuccess) {
     fprintf(stderr, "CUDA Error of work_lda: %s\n", cudaGetErrorString(err));
     exit(EXIT_FAILURE);
   }
+  #endif
 }
 
 #endif

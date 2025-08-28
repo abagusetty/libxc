@@ -22,6 +22,10 @@
 #include <cuda.h>
 #endif
 
+#ifdef HAVE_SYCL
+#include "sycl_device.hpp"
+#endif
+
 #include "xc.h"
 #include "xc_funcs_worker.h"
 
@@ -35,6 +39,10 @@
 #define GPU_FUNCTION __host__ __device__
 #define GPU_DEVICE_FUNCTION __device__
 #define CUDA_BLOCK_SIZE 256
+#elif defined(HAVE_SYCL)
+#define GPU_FUNCTION SYCL_EXTERNAL __attribute__((always_inline))
+#define GPU_DEVICE_FUNCTION __attribute__((always_inline))
+#define GPU_BLOCK_SIZE 256
 #else
 #define GPU_FUNCTION
 #define GPU_DEVICE_FUNCTION
@@ -332,13 +340,14 @@ double xc_mgga_x_br89_get_x(double Q);
    Fortran side */
 void libxc_free(void *ptr);
 
-#ifndef HAVE_CUDA
+#if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
 #define libxc_malloc malloc
 #define libxc_calloc calloc
 #define libxc_memset memset
 #define libxc_memcpy memcpy
 #else
 
+#ifdef HAVE_CUDA
 template <class int_type>
 void * libxc_malloc(const int_type size){
   void * mem;
@@ -361,7 +370,46 @@ void libxc_memcpy(void *dest, void const *src, const int_type size){
   cudaMemcpy(dest, src, size, cudaMemcpyDefault);
 }
 
-#endif
+#elif defined(HAVE_SYCL)
 
+template <class int_type>
+void * libxc_malloc(const int_type size){
+  void * mem;
+  mem = (void*)sycl::malloc_shared(size, *sycl_get_queue());
+  return mem;
+}
+
+template <class int_type1, class int_type2>
+void * libxc_calloc(const int_type1 size1, const int_type2 size2){
+  void * mem;
+  mem = (void*)sycl::malloc_shared(size1*size2, *sycl_get_queue());
+  auto event = sycl_get_queue()->memset(mem, 0, size1*size2);
+  event.wait();
+  return mem;
+}
+
+static inline void libxc_memset(void *ptr, int val, size_t numbytes) {
+  // Seperate treatment is required for calls to libxc_memset for host and
+  // and device. `libxc_memset` is called by several device-only methods
+  // with GPU_DEVICE_FUNCTION or GPU_FUNCTION decorations.
+  #ifdef __SYCL_DEVICE_ONLY__
+  unsigned char* b = static_cast<unsigned char*>(ptr);
+  for (size_t i = 0; i < numbytes; ++i) b[i] = 0;
+  #else
+  memset(ptr, val, numbytes);
+  #endif
+}
+
+//#define libxc_memset(ptr, val, nbytes)  sycl_get_queue()->memset((ptr), (val), (nbytes)).wait()
+
+template <class int_type>
+void libxc_memcpy(void *dest, void const *src, const int_type size){
+  auto event = sycl_get_queue()->memcpy(dest, src, size);
+  event.wait();
+}
+
+#endif // HAVE_CUDA
+
+#endif //if !(HAVE_CUDA) && !(HAVE_SYCL)
 
 #endif

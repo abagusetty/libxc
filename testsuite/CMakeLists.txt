@@ -6,6 +6,8 @@ add_executable(xc-regression xc-regression.c)
 
 if(ENABLE_CUDA)
   set_source_files_properties(xc-consistency.c xc-error.c xc-get_data.c xc-regression.c PROPERTIES LANGUAGE CUDA)
+elseif(ENABLE_SYCL)
+  set_source_files_properties(xc-consistency.c xc-error.c xc-get_data.c xc-regression.c PROPERTIES LANGUAGE CXX)
 endif()
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/workdir)
