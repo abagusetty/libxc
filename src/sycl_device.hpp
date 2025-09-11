@@ -12,6 +12,21 @@
 
 #include <sycl/sycl.hpp>
 
+#ifdef __SYCL_DEVICE_ONLY__
+  /* Map long-double APIs/literals to double on device */
+  #define fabsl  fabs
+  #define expl   exp
+  #define logl   log
+  #define sqrtl  sqrt
+  #define sinl   sin
+  #define cosl   cos
+  #define tanl   tan
+  #define atan2l atan2
+  /* Add others if used */
+
+  #define long double double
+#endif
+
 namespace syclex = sycl::ext::oneapi;
 
 #define __global__ __attribute__((always_inline))
@@ -21,17 +36,6 @@ static int cudaMemcpyHostToDevice{0};
 static int cudaMemcpyDeviceToHost{0};
 //#define cudaMemcpyHostToDevice int
 //#define cudaMemcpyDeviceToHost int
-
-#ifdef SYCL_EXT_ONEAPI_DEVICE_GLOBAL
-template <class T>
-using sycl_device_global = sycl::ext::oneapi::experimental::device_global<T>;
-#else
-template <class T>
-using sycl_device_global = sycl::ext::oneapi::experimental::device_global<
-    T,
-    decltype(sycl::ext::oneapi::experimental::properties(
-        sycl::ext::oneapi::experimental::device_image_scope))>;
-#endif
 
 auto asyncHandler = [](sycl::exception_list exceptions) {
   for (std::exception_ptr const &e : exceptions) {

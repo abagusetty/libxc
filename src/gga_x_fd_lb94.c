@@ -48,7 +48,7 @@ inline double FT_inter(int n, double x)
 [[intel::device_indirectly_callable]]
 #endif
 GPU_FUNCTION
-void func0(double *x, int n, void *dummy)
+void func0_gga_x_fd_lb94(double *x, int n, void *dummy)
 {
   int ii;
 

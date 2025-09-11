@@ -474,6 +474,27 @@ if(ENABLE_CUDA)
   set_source_files_properties(${sources_list} PROPERTIES LANGUAGE CUDA)
 endif()
 if(ENABLE_SYCL)
+  # helper to sanitize a filename to an identifier (replace . and - with _)
+  function(make_file_tag src out_var)
+    get_filename_component(fname "${src}" NAME)           # e.g. hyb_lda_xc_bn05.c
+    string(REGEX REPLACE "[^A-Za-z0-9_]" "_" fname_id "${fname}")
+    # strip extension dot -> e.g. hyb_lda_xc_bn05_c  (or you can drop extension)
+    string(REGEX REPLACE "\\.c$" "" fname_id "${fname_id}")
+    # optionally force prefix to avoid starting with digit
+    set("${out_var}" "FT_${fname_id}" PARENT_SCOPE)
+  endfunction()
+
+
+  # apply per-source compile definitions
+  foreach(src IN LISTS sources_list)
+    make_file_tag("${src}" tag)
+    # You can add other compile definitions if you like (e.g. FILE_TAG_STR)
+    # Set compile definition FILE_TAG=<identifier> for that single source
+    set_source_files_properties(${src} PROPERTIES
+      COMPILE_DEFINITIONS "FILE_TAG=${tag}"
+    )
+  endforeach()
+
   set_source_files_properties(${sources_list} PROPERTIES LANGUAGE CXX)
 endif()
 

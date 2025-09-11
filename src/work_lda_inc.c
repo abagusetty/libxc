@@ -12,6 +12,37 @@
  * @brief This file is to be included in LDA functionals.
  */
 
+/* // ---- begin: once-per-TU helpers (safe with multi-inclusion of this file) ---- */
+/* #ifndef XC_SYCL_KERNEL_NAMING_ONCE */
+/* #define XC_SYCL_KERNEL_NAMING_ONCE */
+
+/* #ifndef __BASE_FILE__ */
+/* #define __BASE_FILE__ __FILE__ */
+/* #endif */
+
+/* namespace xc_detail { */
+
+/* // FNV-1a recursion without default arg */
+/* constexpr unsigned long long fnv1a64_step(const char* s, unsigned long long h) { */
+/*   return *s ? fnv1a64_step(s + 1, (h ^ (unsigned char)*s) * 1099511628211ull) : h; */
+/* } */
+/* constexpr unsigned long long fnv1a64(const char* s) { */
+/*   return fnv1a64_step(s, 1469598103934665603ull); */
+/* } */
+
+/* template<unsigned long long H> */
+/* struct KernelTag {}; */
+
+/* } // namespace xc_detail */
+
+/* #define XC_STR1(x) #x */
+/* #define XC_STR(x)  XC_STR1(x) */
+
+/* #endif // XC_SYCL_KERNEL_NAMING_ONCE */
+/* // ---- end: once-per-TU helpers ---- */
+
+#include "sycl_kernel_tag.h"
+
 #ifdef XC_DEBUG
 #define __USE_GNU 1
 #include <fenv.h>
@@ -27,6 +58,10 @@
 #define WORK_LDA(order, spin)     WORK_LDA_(order, spin)
 #define WORK_LDA_GPU(order, spin) WORK_LDA_GPU_(order, spin)
 #define FUNC(order, spin)         FUNC_(order, spin)
+
+
+/* Declare the kernel type at namespace scope (global) for this inclusion */
+DECLARE_KERNEL_TYPE_NSCOPE(FILE_TAG, ORDER_TXT, SPIN_TXT)
 
 #if !defined(HAVE_CUDA) && !defined(HAVE_SYCL)
 
@@ -162,8 +197,12 @@ WORK_LDA(ORDER_TXT, SPIN_TXT)
   WORK_LDA_GPU(ORDER_TXT, SPIN_TXT)<<<nblocks, CUDA_BLOCK_SIZE>>>
     (pcuda, np, rho, outcuda);
   #else
-  auto event = sycl_get_queue()->parallel_for(sycl::nd_range<1>(nblocks * CUDA_BLOCK_SIZE, CUDA_BLOCK_SIZE), [=](auto item) {
-      WORK_LDA_GPU(ORDER_TXT, SPIN_TXT) (pcuda, np, rho, outcuda); });
+
+  /* Use the declared namespace-scope type as the kernel-name: */
+  using kernel_t = KERNEL_TYPE(FILE_TAG, ORDER_TXT, SPIN_TXT);
+
+  auto event = sycl_get_queue()->parallel_for<kernel_t>(sycl::nd_range<1>(nblocks * CUDA_BLOCK_SIZE, CUDA_BLOCK_SIZE), [=](auto item) {
+        WORK_LDA_GPU(ORDER_TXT, SPIN_TXT) (pcuda, np, rho, outcuda); });
   event.wait();
   // event.wait() is required here to prevent undefined-behavior with free-ing memory
   // unlike CUDA which does implicit sync with freeing-device memory

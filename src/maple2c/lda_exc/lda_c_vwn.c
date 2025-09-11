@@ -14,6 +14,16 @@
 #define maple2c_order 4
 #define MAPLE2C_FLAGS (XC_FLAGS_I_HAVE_EXC | XC_FLAGS_I_HAVE_VXC | XC_FLAGS_I_HAVE_FXC | XC_FLAGS_I_HAVE_KXC | XC_FLAGS_I_HAVE_LXC)
 
+#if defined(HAVE_SYCL)
+  #include <sycl/sycl.hpp>
+  using sycl::ext::oneapi::experimental::printf;
+  #define DEV_PRINTF(...) sycl::ext::oneapi::experimental::printf(__VA_ARGS__)
+#elif defined(HAVE_CUDA)
+  #define DEV_PRINTF(...) printf(__VA_ARGS__)
+#else
+  #define DEV_PRINTF(...) ((void)0)
+#endif
+
 
 #ifndef XC_DONT_COMPILE_EXC
 GPU_DEVICE_FUNCTION static inline void
@@ -81,6 +91,12 @@ func_exc_unpol(const xc_func_type *p, size_t ip, const double *rho, xc_lda_out_p
 GPU_DEVICE_FUNCTION static inline void
 func_vxc_unpol(const xc_func_type *p, size_t ip, const double *rho, xc_lda_out_params *out)
 {
+
+  /* at the very start of each func_vxc_unpol in BOTH files */
+  DEV_PRINTF("CALLED: %s :: %s\n", __FILE__, __func__);
+
+  //sycl::ext::oneapi::experimental::printf("calling from func_vxc_unpol in lda_c_vwn.c\n");
+  
   double t1, t2, t3, t4, t5, t6, t7, t8;
   double t9, t10, t11, t12, t14, t15, t19, t20;
   double t21, t24, t25, t26, t27, t28, t30, t31;
